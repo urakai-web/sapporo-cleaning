@@ -109,23 +109,15 @@ export default function BeforeAfter() {
           </p>
         </div>
 
-        {/* Cases — mobile: horizontal swipe / desktop: grid */}
+        {/* Cases — mobile: free horizontal scroll / desktop: grid */}
         <div
-          className="
-            flex gap-5 overflow-x-auto pb-4 snap-x snap-mandatory scroll-smooth
-            md:grid md:grid-cols-2 md:overflow-visible md:pb-0
-            -mx-4 px-4 md:mx-0 md:px-0
-          "
-          style={{ scrollbarWidth: 'none' }}
+          className="flex gap-5 overflow-x-auto pb-4 md:grid md:grid-cols-2 md:overflow-visible md:pb-0 -mx-4 px-4 md:mx-0 md:px-0"
+          style={{ scrollbarWidth: 'none', WebkitOverflowScrolling: 'touch' } as React.CSSProperties}
         >
           {cases.map(c => (
             <div
               key={c.id}
-              className="
-                snap-start shrink-0 w-[82vw] sm:w-[65vw]
-                md:w-auto md:shrink
-                bg-white rounded-2xl overflow-hidden shadow-sm
-              "
+              className="shrink-0 w-72 md:w-auto bg-white rounded-2xl overflow-hidden shadow-sm"
             >
               <BeforeAfterSlider before={c.before} after={c.after} />
               <div className="p-5">

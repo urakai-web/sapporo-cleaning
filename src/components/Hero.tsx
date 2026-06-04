@@ -36,11 +36,7 @@ export default function Hero() {
           className="absolute inset-0 transition-opacity duration-700"
           style={{ opacity: i === current && !fading ? 1 : 0 }}
         >
-          <img
-            src={src}
-            alt=""
-            className="w-full h-full object-cover"
-          />
+          <img src={src} alt="" className="w-full h-full object-cover" />
         </div>
       ))}
 
@@ -54,72 +50,71 @@ export default function Hero() {
 
       {/* Content */}
       <div className="relative z-10 max-w-6xl mx-auto px-4 w-full">
-        <div className="flex flex-col md:flex-row items-center gap-8 py-16 md:py-0 md:min-h-[calc(100vh-64px)]">
+        {/* 常に左右並列レイアウト（モバイルはサイズ縮小） */}
+        <div className="flex flex-row items-center gap-4 md:gap-8 py-10 md:py-0 min-h-[calc(100vh-64px)]">
 
           {/* Left: Copy */}
-          <div className="flex-1 flex flex-col gap-6">
+          <div className="flex-1 flex flex-col gap-3 md:gap-6 min-w-0">
             {/* Badge */}
-            <span className="inline-flex w-fit items-center gap-2 bg-white/80 backdrop-blur-sm border border-sky-lighter text-navy text-xs font-bold px-3 py-1.5 rounded-full animate-fadein">
-              <span className="w-2 h-2 rounded-full bg-line-green inline-block"></span>
+            <span className="inline-flex w-fit items-center gap-1.5 bg-white/80 backdrop-blur-sm border border-sky-lighter text-navy text-xs font-bold px-2.5 py-1 rounded-full animate-fadein">
+              <span className="w-1.5 h-1.5 rounded-full bg-line-green inline-block"></span>
               受付中 9:00〜20:00
             </span>
 
             {/* Main copy */}
             <div className="animate-fadein-delay">
-              <h1 className="text-3xl md:text-4xl lg:text-5xl font-black text-navy leading-tight">
+              <h1 className="text-xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-navy leading-tight">
                 札幌市の<br />
                 ハウスクリーニング<br />
                 ・便利サービス
               </h1>
             </div>
 
-            {/* Sub copy */}
-            <p className="text-sm md:text-base text-navy/70 leading-relaxed animate-fadein-delay2">
+            {/* Sub copy — sm以上で表示 */}
+            <p className="hidden sm:block text-sm md:text-base text-navy/70 leading-relaxed animate-fadein-delay2">
               エアコン・水回り・退去清掃・ちょっとしたお困りごとまで。<br />
               個人様・法人様どちらもお気軽にご相談ください。
             </p>
 
             {/* CTA buttons */}
-            <div className="flex flex-col sm:flex-row gap-3 animate-fadein-delay2">
+            <div className="flex flex-col gap-2 md:flex-row md:gap-3 animate-fadein-delay2">
               <a
                 href={LINE_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center justify-center gap-2.5 bg-line-green text-white font-bold text-base px-8 py-4 rounded-full shadow-lg hover:opacity-90 active:scale-95 transition-all"
+                className="flex items-center justify-center gap-2 bg-line-green text-white font-bold text-sm md:text-base px-4 md:px-8 py-3 md:py-4 rounded-full shadow-lg hover:opacity-90 active:scale-95 transition-all"
               >
-                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                <svg className="w-4 h-4 md:w-5 md:h-5 shrink-0" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.627-.63h2.386c.349 0 .63.285.63.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.627-.63.349 0 .631.285.631.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .629.285.629.63v4.141h1.757c.348 0 .63.283.63.63 0 .344-.282.629-.63.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314"/>
                 </svg>
-                LINEで相談する
+                LINEで相談
               </a>
               <a
                 href={`tel:${TEL}`}
-                className="flex items-center justify-center gap-2.5 border-2 border-navy text-navy font-bold text-base px-8 py-4 rounded-full bg-white/60 backdrop-blur-sm hover:bg-navy hover:text-white active:scale-95 transition-all"
+                className="flex items-center justify-center gap-2 border-2 border-navy text-navy font-bold text-sm md:text-base px-4 md:px-8 py-3 md:py-4 rounded-full bg-white/60 backdrop-blur-sm hover:bg-navy hover:text-white active:scale-95 transition-all"
               >
-                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 h-4 md:w-5 md:h-5 shrink-0" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1-9.4 0-17-7.6-17-17 0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1L6.6 10.8z"/>
                 </svg>
                 電話する
               </a>
             </div>
-
           </div>
 
           {/* Right: Fixed person photo */}
-          <div className="flex-shrink-0 flex flex-col items-center gap-4 animate-fadein-delay">
+          <div className="flex-shrink-0 flex flex-col items-center gap-2 md:gap-4 animate-fadein-delay">
             <div className="relative">
-              {/* Decorative ring */}
-              <div className="absolute -inset-2 rounded-2xl bg-white/40 backdrop-blur-sm border border-white/60" />
+              <div className="absolute -inset-1.5 md:-inset-2 rounded-2xl bg-white/40 backdrop-blur-sm border border-white/60" />
               <img
                 src="/images/担当者.jpg"
                 alt="担当者"
-                className="relative w-56 md:w-64 lg:w-72 aspect-[3/4] object-cover object-top rounded-xl shadow-2xl"
+                className="relative w-28 sm:w-44 md:w-64 lg:w-72 aspect-[3/4] object-cover object-top rounded-xl shadow-2xl"
               />
             </div>
             {/* Name card */}
-            <div className="bg-white/80 backdrop-blur-sm border border-sky-lighter rounded-xl px-6 py-3 text-center shadow-sm">
-              <p className="text-xs text-navy/50 font-medium mb-0.5">代表</p>
-              <p className="text-navy font-black text-lg tracking-wide">お名前</p>
+            <div className="bg-white/80 backdrop-blur-sm border border-sky-lighter rounded-xl px-3 md:px-6 py-1.5 md:py-3 text-center shadow-sm">
+              <p className="text-xs text-navy/50 font-medium leading-tight">代表</p>
+              <p className="text-navy font-black text-sm md:text-lg tracking-wide">お名前</p>
             </div>
           </div>
 
