@@ -115,6 +115,7 @@ export default function Hero() {
             <div className="bg-white/80 backdrop-blur-sm border border-sky-lighter rounded-xl px-6 py-3 text-center shadow-sm">
               <p className="text-xs text-navy/50 font-medium mb-0.5">代表</p>
               <p className="text-navy font-black text-lg tracking-wide">お名前</p>
+              <p className="text-xs text-navy/70 mt-1">私が伺います！</p>
             </div>
           </div>
 
