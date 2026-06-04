@@ -103,17 +103,6 @@ export default function Hero() {
               </a>
             </div>
 
-            {/* Supplement badges */}
-            <div className="flex flex-wrap gap-2 animate-fadein-delay2">
-              {['見積相談OK', '札幌市周辺対応', '9:00〜20:00'].map(badge => (
-                <span
-                  key={badge}
-                  className="text-xs font-medium text-navy bg-white/70 backdrop-blur-sm border border-sky-lighter px-3 py-1.5 rounded-full"
-                >
-                  {badge}
-                </span>
-              ))}
-            </div>
           </div>
 
           {/* Right: Fixed person photo */}

@@ -47,12 +47,22 @@ export default function Works() {
           </p>
         </div>
 
-        {/* Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {/* Cards — mobile: horizontal swipe / desktop: grid */}
+        <div className="
+          flex gap-4 overflow-x-auto pb-4 snap-x snap-mandatory scroll-smooth
+          md:grid md:grid-cols-3 md:overflow-visible md:pb-0
+          -mx-4 px-4 md:mx-0 md:px-0
+        "
+          style={{ scrollbarWidth: 'none' }}
+        >
           {works.map(work => (
             <article
               key={work.id}
-              className="bg-white border border-sky-lighter rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow group"
+              className="
+                snap-start shrink-0 w-[78vw] sm:w-[60vw]
+                md:w-auto md:shrink
+                bg-white border border-sky-lighter rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow group
+              "
             >
               <div className="aspect-video overflow-hidden">
                 <img
@@ -71,6 +81,7 @@ export default function Works() {
             </article>
           ))}
         </div>
+        <p className="mt-2 text-center text-xs text-navy/40 md:hidden">← スワイプで見る →</p>
 
         {/* Instagram CTA */}
         <div className="mt-10 text-center">

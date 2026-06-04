@@ -109,10 +109,24 @@ export default function BeforeAfter() {
           </p>
         </div>
 
-        {/* Cases */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        {/* Cases — mobile: horizontal swipe / desktop: grid */}
+        <div
+          className="
+            flex gap-5 overflow-x-auto pb-4 snap-x snap-mandatory scroll-smooth
+            md:grid md:grid-cols-2 md:overflow-visible md:pb-0
+            -mx-4 px-4 md:mx-0 md:px-0
+          "
+          style={{ scrollbarWidth: 'none' }}
+        >
           {cases.map(c => (
-            <div key={c.id} className="bg-white rounded-2xl overflow-hidden shadow-sm">
+            <div
+              key={c.id}
+              className="
+                snap-start shrink-0 w-[82vw] sm:w-[65vw]
+                md:w-auto md:shrink
+                bg-white rounded-2xl overflow-hidden shadow-sm
+              "
+            >
               <BeforeAfterSlider before={c.before} after={c.after} />
               <div className="p-5">
                 <div className="flex items-center gap-2 mb-1">
@@ -124,6 +138,7 @@ export default function BeforeAfter() {
             </div>
           ))}
         </div>
+        <p className="mt-2 text-center text-xs text-navy/40 md:hidden">← スワイプで見る →</p>
 
       </div>
     </section>
