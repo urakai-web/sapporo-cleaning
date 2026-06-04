@@ -2,7 +2,7 @@
 const works = [
   {
     id: 1,
-    image: '/images/担当者.jpg',
+    image: '/images/エアコン.png',
     title: 'エアコンクリーニング',
     description: '内部のホコリやカビ汚れを洗浄し、ニオイや効きの改善を目指しました。シーズン前のメンテナンスにもおすすめです。',
   },
@@ -36,7 +36,7 @@ export default function Works() {
             エアコン、水回り、退去清掃など、さまざまな現場に対応しています。<br className="hidden md:block" />
             作業の様子は
             <a
-              href="https://www.instagram.com/"
+              href="https://www.instagram.com/cleanlab800?igsh=YnI1cDZzcWw4cXFt"
               target="_blank"
               rel="noopener noreferrer"
               className="text-navy font-bold underline underline-offset-2 hover:opacity-70 transition-opacity"
@@ -79,7 +79,7 @@ export default function Works() {
         {/* Instagram CTA */}
         <div className="mt-10 text-center">
           <a
-            href="https://www.instagram.com/"
+            href="https://www.instagram.com/cleanlab800?igsh=YnI1cDZzcWw4cXFt"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 border-2 border-navy text-navy font-bold px-8 py-3.5 rounded-full hover:bg-navy hover:text-white transition-all"

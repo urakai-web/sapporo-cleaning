@@ -64,10 +64,10 @@ export default function Hero() {
 
             {/* Main copy */}
             <div className="animate-fadein-delay">
-              <h1 className="text-3xl md:text-4xl lg:text-5xl font-black text-navy leading-tight">
+              <h1 className="text-3xl md:text-4xl lg:text-5xl font-black text-navy leading-tight text-center md:text-left">
                 札幌市の<br />
                 ハウスクリーニング<br />
-                ・便利サービス
+                便利サービス
               </h1>
             </div>
 

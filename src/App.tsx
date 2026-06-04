@@ -6,6 +6,7 @@ import BeforeAfter from './components/BeforeAfter'
 import Contact from './components/Contact'
 import MapSection from './components/MapSection'
 import Footer from './components/Footer'
+import FloatingCTA from './components/FloatingCTA'
 
 export default function App() {
   return (
@@ -20,6 +21,7 @@ export default function App() {
         <MapSection />
       </main>
       <Footer />
+      <FloatingCTA />
     </div>
   )
 }
