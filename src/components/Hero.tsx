@@ -40,13 +40,13 @@ export default function Hero() {
         </div>
       ))}
 
-      {/* Gradient overlay */}
-      <div
-        className="absolute inset-0"
-        style={{
-          background: 'linear-gradient(to right, rgba(255,255,255,0.97) 0%, rgba(255,255,255,0.92) 40%, rgba(255,255,255,0.5) 65%, rgba(255,255,255,0.0) 100%)',
-        }}
-      />
+      {/* Gradient overlay — mobile: 上から下, desktop: 左から右 */}
+      <div className="absolute inset-0 md:hidden" style={{
+        background: 'linear-gradient(to bottom, rgba(255,255,255,0.75) 0%, rgba(255,255,255,0.55) 50%, rgba(255,255,255,0.10) 100%)',
+      }} />
+      <div className="absolute inset-0 hidden md:block" style={{
+        background: 'linear-gradient(to right, rgba(255,255,255,0.88) 0%, rgba(255,255,255,0.70) 35%, rgba(255,255,255,0.25) 58%, rgba(255,255,255,0.0) 100%)',
+      }} />
 
       {/* Content */}
       <div className="relative z-10 max-w-6xl mx-auto px-4 w-full">
