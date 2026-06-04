@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from 'react'
+import { useState, useRef, useCallback, useEffect } from 'react'
 
 // ビフォーアフターデータ — 将来的にmicroCMSから取得する想定
 const cases = [
@@ -37,9 +37,28 @@ function BeforeAfterSlider({ before, after }: { before: string; after: string })
   }
   const onMouseUp = () => { dragging.current = false }
 
-  const onTouchMove = (e: React.TouchEvent) => {
-    updatePosition(e.touches[0].clientX)
-  }
+  // タッチ操作: スライダー操作中は親コンテナへの伝播を防ぐ（passive: false 必須）
+  useEffect(() => {
+    const el = containerRef.current
+    if (!el) return
+
+    const onTouchStart = () => { dragging.current = true }
+    const onTouchEnd = () => { dragging.current = false }
+    const onTouchMove = (e: TouchEvent) => {
+      if (!dragging.current) return
+      e.preventDefault() // 親コンテナの横スクロールをブロック
+      updatePosition(e.touches[0].clientX)
+    }
+
+    el.addEventListener('touchstart', onTouchStart, { passive: true })
+    el.addEventListener('touchend', onTouchEnd, { passive: true })
+    el.addEventListener('touchmove', onTouchMove, { passive: false })
+    return () => {
+      el.removeEventListener('touchstart', onTouchStart)
+      el.removeEventListener('touchend', onTouchEnd)
+      el.removeEventListener('touchmove', onTouchMove)
+    }
+  }, [updatePosition])
 
   return (
     <div
@@ -49,7 +68,6 @@ function BeforeAfterSlider({ before, after }: { before: string; after: string })
       onMouseMove={onMouseMove}
       onMouseUp={onMouseUp}
       onMouseLeave={onMouseUp}
-      onTouchMove={onTouchMove}
     >
       {/* After image (base) */}
       <img src={after} alt="After" className="w-full h-full object-cover" draggable={false} />
