@@ -17,6 +17,7 @@ export default function Hero() {
   const [staffCurrent, setStaffCurrent] = useState(0)
   const staffContainerRef = useRef<HTMLDivElement>(null)
   const [containerWidth, setContainerWidth] = useState(0)
+  const touchStartX = useRef<number | null>(null)
 
   // 背景画像ローテーション
   useEffect(() => {
@@ -145,7 +146,20 @@ export default function Hero() {
             <div className="flex-shrink-0 flex flex-col items-center gap-3 md:gap-4 animate-fadein-delay w-full md:w-72 lg:w-80">
 
               {/* ピークカルーセル */}
-              <div ref={staffContainerRef} className="w-full overflow-hidden">
+              <div
+                ref={staffContainerRef}
+                className="w-full overflow-hidden"
+                onTouchStart={e => { touchStartX.current = e.touches[0].clientX }}
+                onTouchEnd={e => {
+                  if (touchStartX.current === null) return
+                  const diff = touchStartX.current - e.changedTouches[0].clientX
+                  if (Math.abs(diff) > 40 && staff.length > 1) {
+                    if (diff > 0) setStaffCurrent(prev => (prev + 1) % staff.length)
+                    else setStaffCurrent(prev => (prev - 1 + staff.length) % staff.length)
+                  }
+                  touchStartX.current = null
+                }}
+              >
                 <div
                   className="flex transition-transform duration-500 ease-in-out"
                   style={{
