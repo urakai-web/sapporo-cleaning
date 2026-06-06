@@ -59,7 +59,7 @@ export default function Hero() {
             {/* Badge */}
             <span className="inline-flex w-fit items-center gap-2 bg-white/80 backdrop-blur-sm border border-sky-lighter text-navy text-xs font-bold px-3 py-1.5 rounded-full animate-fadein">
               <span className="w-2 h-2 rounded-full bg-line-green inline-block"></span>
-              受付中 9:00〜20:00
+              受付中 9:00〜18:00
             </span>
 
             {/* Main copy */}

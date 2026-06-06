@@ -32,7 +32,7 @@ export default function Footer() {
               </div>
               <div className="flex gap-3">
                 <dt className="text-white/40 w-20 shrink-0">営業時間</dt>
-                <dd>9:00〜20:00</dd>
+                <dd>9:00〜18:00</dd>
               </div>
               <div className="flex gap-3">
                 <dt className="text-white/40 w-20 shrink-0">定休日</dt>

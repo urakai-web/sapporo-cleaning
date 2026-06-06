@@ -47,7 +47,7 @@ export default function Contact() {
           <svg className="w-4 h-4 text-white/60" fill="currentColor" viewBox="0 0 24 24">
             <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
           </svg>
-          <span className="text-white/80 text-sm font-medium">営業時間 9:00〜20:00 / 定休日なし</span>
+          <span className="text-white/80 text-sm font-medium">営業時間 9:00〜18:00 / 定休日なし</span>
         </div>
 
       </div>
