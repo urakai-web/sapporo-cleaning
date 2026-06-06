@@ -1,26 +1,51 @@
-// 施工実績データ — 将来的にmicroCMSから取得する想定
-const works = [
+import { useState, useEffect } from 'react'
+import { getWorks, type Work } from '../lib/microcms'
+
+// フォールバック用静的データ（microCMSが空の場合に使用）
+const fallbackWorks: Work[] = [
   {
-    id: 1,
-    image: '/images/エアコン.png',
+    id: '1',
+    createdAt: '',
+    updatedAt: '',
+    publishedAt: '',
+    revisedAt: '',
+    image: { url: '/images/エアコン.png', height: 400, width: 600 },
     title: 'エアコンクリーニング',
     description: '内部のホコリやカビ汚れを洗浄し、ニオイや効きの改善を目指しました。シーズン前のメンテナンスにもおすすめです。',
   },
   {
-    id: 2,
-    image: '/images/洗面台掃除後.jpg',
+    id: '2',
+    createdAt: '',
+    updatedAt: '',
+    publishedAt: '',
+    revisedAt: '',
+    image: { url: '/images/洗面台掃除後.jpg', height: 400, width: 600 },
     title: '洗面台・水回りクリーニング',
     description: '蛇口周りのカルキ汚れや排水口の詰まりをしっかり除去。ピカピカの仕上がりでご満足いただけました。',
   },
   {
-    id: 3,
-    image: '/images/トイレ掃除後.jpg',
+    id: '3',
+    createdAt: '',
+    updatedAt: '',
+    publishedAt: '',
+    revisedAt: '',
+    image: { url: '/images/トイレ掃除後.jpg', height: 400, width: 600 },
     title: 'トイレクリーニング',
     description: '便器の黄ばみや水垢、タンク内部まで丁寧に洗浄。気になるニオイもスッキリきれいにします。',
   },
 ]
 
 export default function Works() {
+  const [works, setWorks] = useState<Work[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    getWorks()
+      .then(res => setWorks(res.contents.length > 0 ? res.contents : fallbackWorks))
+      .catch(() => setWorks(fallbackWorks))
+      .finally(() => setLoading(false))
+  }, [])
+
   return (
     <section id="works" className="bg-white py-20 md:py-28">
       <div className="max-w-6xl mx-auto px-4">
@@ -47,33 +72,48 @@ export default function Works() {
           </p>
         </div>
 
-        {/* Cards — mobile: free horizontal scroll / desktop: grid */}
-        <div
-          className="flex gap-4 overflow-x-auto pb-4 md:grid md:grid-cols-3 md:overflow-visible md:pb-0 -mx-4 px-4 md:mx-0 md:px-0"
-          style={{ scrollbarWidth: 'none', WebkitOverflowScrolling: 'touch' } as React.CSSProperties}
-        >
-          {works.map(work => (
-            <article
-              key={work.id}
-              className="shrink-0 w-64 md:w-auto bg-white border border-sky-lighter rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow group"
-            >
-              <div className="aspect-video overflow-hidden">
-                <img
-                  src={work.image}
-                  alt={work.title}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                />
-              </div>
-              <div className="p-5">
-                <div className="flex items-center gap-2 mb-2">
-                  <span className="w-1 h-5 rounded-full bg-navy inline-block"></span>
-                  <h3 className="font-black text-navy text-base">{work.title}</h3>
+        {/* Cards */}
+        {loading ? (
+          <div className="flex gap-4 -mx-4 px-4">
+            {[1, 2, 3].map(i => (
+              <div key={i} className="shrink-0 w-64 md:w-auto md:flex-1 bg-gray-100 rounded-2xl overflow-hidden animate-pulse">
+                <div className="aspect-video bg-gray-200" />
+                <div className="p-5 space-y-2">
+                  <div className="h-4 bg-gray-200 rounded w-2/3" />
+                  <div className="h-3 bg-gray-200 rounded w-full" />
+                  <div className="h-3 bg-gray-200 rounded w-4/5" />
                 </div>
-                <p className="text-sm text-navy/70 leading-relaxed">{work.description}</p>
               </div>
-            </article>
-          ))}
-        </div>
+            ))}
+          </div>
+        ) : (
+          <div
+            className="flex gap-4 overflow-x-auto pb-4 md:grid md:grid-cols-3 md:overflow-visible md:pb-0 -mx-4 px-4 md:mx-0 md:px-0"
+            style={{ scrollbarWidth: 'none', WebkitOverflowScrolling: 'touch' } as React.CSSProperties}
+          >
+            {works.map(work => (
+              <article
+                key={work.id}
+                className="shrink-0 w-64 md:w-auto bg-white border border-sky-lighter rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow group"
+              >
+                <div className="aspect-video overflow-hidden">
+                  <img
+                    src={work.image.url}
+                    alt={work.title}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                </div>
+                <div className="p-5">
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="w-1 h-5 rounded-full bg-navy inline-block"></span>
+                    <h3 className="font-black text-navy text-base">{work.title}</h3>
+                  </div>
+                  <p className="text-sm text-navy/70 leading-relaxed">{work.description}</p>
+                </div>
+              </article>
+            ))}
+          </div>
+        )}
         <p className="mt-2 text-center text-xs text-navy/40 md:hidden">← スワイプで見る →</p>
 
         {/* Instagram CTA */}

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { getStaff, type Staff } from '../lib/microcms'
 
 const LINE_URL = 'https://page.line.me/245ksvcv?openQrModal=true'
 const TEL = '090-6692-9256'
@@ -9,20 +10,60 @@ const heroImages = [
   '/images/ヒーローセクション3.png',
 ]
 
-export default function Hero() {
-  const [current, setCurrent] = useState(0)
-  const [fading, setFading] = useState(false)
+// フォールバック用スタッフ
+const fallbackStaff: Staff[] = [
+  {
+    id: '1',
+    createdAt: '',
+    updatedAt: '',
+    publishedAt: '',
+    revisedAt: '',
+    image: { url: '/images/担当者.jpg', height: 600, width: 400 },
+    name: 'お名前',
+    subtitle: '私が伺います！',
+  },
+]
 
+export default function Hero() {
+  const [bgCurrent, setBgCurrent] = useState(0)
+  const [bgFading, setBgFading] = useState(false)
+  const [staff, setStaff] = useState<Staff[]>(fallbackStaff)
+  const [staffCurrent, setStaffCurrent] = useState(0)
+  const [staffFading, setStaffFading] = useState(false)
+
+  // 背景画像ローテーション
   useEffect(() => {
     const timer = setInterval(() => {
-      setFading(true)
+      setBgFading(true)
       setTimeout(() => {
-        setCurrent(prev => (prev + 1) % heroImages.length)
-        setFading(false)
+        setBgCurrent(prev => (prev + 1) % heroImages.length)
+        setBgFading(false)
       }, 500)
     }, 5000)
     return () => clearInterval(timer)
   }, [])
+
+  // スタッフデータ取得
+  useEffect(() => {
+    getStaff()
+      .then(res => { if (res.contents.length > 0) setStaff(res.contents) })
+      .catch(() => {/* フォールバックを維持 */})
+  }, [])
+
+  // スタッフローテーション（スタッフが2人以上のとき）
+  useEffect(() => {
+    if (staff.length <= 1) return
+    const timer = setInterval(() => {
+      setStaffFading(true)
+      setTimeout(() => {
+        setStaffCurrent(prev => (prev + 1) % staff.length)
+        setStaffFading(false)
+      }, 400)
+    }, 4000)
+    return () => clearInterval(timer)
+  }, [staff])
+
+  const currentStaff = staff[staffCurrent]
 
   return (
     <section
@@ -34,13 +75,13 @@ export default function Hero() {
         <div
           key={src}
           className="absolute inset-0 transition-opacity duration-700"
-          style={{ opacity: i === current && !fading ? 1 : 0 }}
+          style={{ opacity: i === bgCurrent && !bgFading ? 1 : 0 }}
         >
           <img src={src} alt="" className="w-full h-full object-cover" />
         </div>
       ))}
 
-      {/* Gradient overlay — mobile: 上から下, desktop: 左から右 */}
+      {/* Gradient overlay */}
       <div className="absolute inset-0 md:hidden" style={{
         background: 'linear-gradient(to bottom, rgba(255,255,255,0.75) 0%, rgba(255,255,255,0.55) 50%, rgba(255,255,255,0.10) 100%)',
       }} />
@@ -50,19 +91,15 @@ export default function Hero() {
 
       {/* Content */}
       <div className="relative z-10 max-w-6xl mx-auto px-4 w-full">
-
-        {/* モバイル: 縦並び / PC: 左右並列 */}
         <div className="flex flex-col md:flex-row md:items-center gap-6 md:gap-8 py-10 md:py-0 md:min-h-[calc(100vh-64px)]">
 
           {/* Left / Top: Copy + Buttons */}
           <div className="flex-1 flex flex-col gap-4 md:gap-6">
-            {/* Badge */}
             <span className="inline-flex w-fit items-center gap-2 bg-white/80 backdrop-blur-sm border border-sky-lighter text-navy text-xs font-bold px-3 py-1.5 rounded-full animate-fadein">
               <span className="w-2 h-2 rounded-full bg-line-green inline-block"></span>
               受付中 9:00〜18:00
             </span>
 
-            {/* Main copy */}
             <div className="animate-fadein-delay">
               <h1 className="text-3xl md:text-4xl lg:text-5xl font-black text-navy leading-tight text-center md:text-left">
                 札幌市の<br />
@@ -71,13 +108,11 @@ export default function Hero() {
               </h1>
             </div>
 
-            {/* Sub copy — モバイルでも表示 */}
             <p className="text-sm md:text-base text-navy/70 leading-relaxed animate-fadein-delay2">
               エアコン・水回り・退去清掃・ちょっとしたお困りごとまで。<br />
               個人様・法人様どちらもお気軽にご相談ください。
             </p>
 
-            {/* CTA buttons */}
             <div className="flex flex-col sm:flex-row gap-3 animate-fadein-delay2">
               <a
                 href={LINE_URL}
@@ -102,33 +137,49 @@ export default function Hero() {
             </div>
           </div>
 
-          {/* Right / Bottom: Person photo */}
+          {/* Right / Bottom: Staff photo (rotating) */}
           <div className="flex-shrink-0 flex flex-col items-center gap-3 md:gap-4 animate-fadein-delay">
             <div className="relative">
               <div className="absolute -inset-2 rounded-2xl bg-white/40 backdrop-blur-sm border border-white/60" />
               <img
-                src="/images/担当者.jpg"
-                alt="担当者"
-                className="relative w-48 sm:w-56 md:w-64 lg:w-72 aspect-[3/4] object-cover object-top rounded-xl shadow-2xl"
+                src={currentStaff.image.url}
+                alt={currentStaff.name}
+                className={`relative w-48 sm:w-56 md:w-64 lg:w-72 aspect-[3/4] object-cover object-top rounded-xl shadow-2xl transition-opacity duration-400 ${staffFading ? 'opacity-0' : 'opacity-100'}`}
               />
             </div>
-            <div className="bg-white/80 backdrop-blur-sm border border-sky-lighter rounded-xl px-6 py-3 text-center shadow-sm">
-              <p className="text-xs text-navy/50 font-medium mb-0.5">代表</p>
-              <p className="text-navy font-black text-lg tracking-wide">お名前</p>
-              <p className="text-xs text-navy/70 mt-1">私が伺います！</p>
+
+            {/* Name card */}
+            <div className={`bg-white/80 backdrop-blur-sm border border-sky-lighter rounded-xl px-6 py-3 text-center shadow-sm transition-opacity duration-400 ${staffFading ? 'opacity-0' : 'opacity-100'}`}>
+              <p className="text-xs text-navy/50 font-medium mb-0.5">スタッフ</p>
+              <p className="text-navy font-black text-lg tracking-wide">{currentStaff.name}</p>
+              <p className="text-xs text-navy/70 mt-1">{currentStaff.subtitle}</p>
             </div>
+
+            {/* スタッフが複数のときドットナビ表示 */}
+            {staff.length > 1 && (
+              <div className="flex gap-1.5">
+                {staff.map((_, i) => (
+                  <button
+                    key={i}
+                    onClick={() => setStaffCurrent(i)}
+                    className={`h-1.5 rounded-full transition-all duration-300 ${i === staffCurrent ? 'w-6 bg-navy' : 'w-1.5 bg-navy/30'}`}
+                    aria-label={`スタッフ ${i + 1}`}
+                  />
+                ))}
+              </div>
+            )}
           </div>
 
         </div>
       </div>
 
-      {/* Image dots */}
+      {/* 背景画像ドット */}
       <div className="absolute bottom-6 left-0 right-0 flex justify-center gap-2 z-10">
         {heroImages.map((_, i) => (
           <button
             key={i}
-            onClick={() => setCurrent(i)}
-            className={`h-1.5 rounded-full transition-all duration-300 ${i === current ? 'w-8 bg-navy' : 'w-2 bg-navy/30'}`}
+            onClick={() => setBgCurrent(i)}
+            className={`h-1.5 rounded-full transition-all duration-300 ${i === bgCurrent ? 'w-8 bg-navy' : 'w-2 bg-navy/30'}`}
             aria-label={`画像 ${i + 1}`}
           />
         ))}

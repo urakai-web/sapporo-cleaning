@@ -1,18 +1,27 @@
 import { useState, useRef, useCallback, useEffect } from 'react'
+import { getBeforeAfterCases, type BeforeAfterCase } from '../lib/microcms'
 
-// ビフォーアフターデータ — 将来的にmicroCMSから取得する想定
-const cases = [
+// フォールバック用静的データ
+const fallbackCases: BeforeAfterCase[] = [
   {
-    id: 1,
-    before: '/images/トイレ掃除前.jpg',
-    after: '/images/トイレ掃除後.jpg',
+    id: '1',
+    createdAt: '',
+    updatedAt: '',
+    publishedAt: '',
+    revisedAt: '',
+    before_image: { url: '/images/トイレ掃除前.jpg', height: 600, width: 400 },
+    after_image: { url: '/images/トイレ掃除後.jpg', height: 600, width: 400 },
     title: 'トイレクリーニング',
     description: '便器の黄ばみ・水垢・タンク内部まで丁寧に洗浄',
   },
   {
-    id: 2,
-    before: '/images/洗面台掃除前.jpg',
-    after: '/images/洗面台掃除後.jpg',
+    id: '2',
+    createdAt: '',
+    updatedAt: '',
+    publishedAt: '',
+    revisedAt: '',
+    before_image: { url: '/images/洗面台掃除前.jpg', height: 600, width: 400 },
+    after_image: { url: '/images/洗面台掃除後.jpg', height: 600, width: 400 },
     title: '洗面台クリーニング',
     description: '蛇口周りのカルキ汚れ・排水口の詰まりを除去',
   },
@@ -37,19 +46,16 @@ function BeforeAfterSlider({ before, after }: { before: string; after: string })
   }
   const onMouseUp = () => { dragging.current = false }
 
-  // タッチ操作: スライダー操作中は親コンテナへの伝播を防ぐ（passive: false 必須）
   useEffect(() => {
     const el = containerRef.current
     if (!el) return
-
     const onTouchStart = () => { dragging.current = true }
     const onTouchEnd = () => { dragging.current = false }
     const onTouchMove = (e: TouchEvent) => {
       if (!dragging.current) return
-      e.preventDefault() // 親コンテナの横スクロールをブロック
+      e.preventDefault()
       updatePosition(e.touches[0].clientX)
     }
-
     el.addEventListener('touchstart', onTouchStart, { passive: true })
     el.addEventListener('touchend', onTouchEnd, { passive: true })
     el.addEventListener('touchmove', onTouchMove, { passive: false })
@@ -69,14 +75,8 @@ function BeforeAfterSlider({ before, after }: { before: string; after: string })
       onMouseUp={onMouseUp}
       onMouseLeave={onMouseUp}
     >
-      {/* After image (base) */}
       <img src={after} alt="After" className="w-full h-full object-cover" draggable={false} />
-
-      {/* Before image (clipped) */}
-      <div
-        className="before-image"
-        style={{ width: `${position}%` }}
-      >
+      <div className="before-image" style={{ width: `${position}%` }}>
         <img
           src={before}
           alt="Before"
@@ -85,8 +85,6 @@ function BeforeAfterSlider({ before, after }: { before: string; after: string })
           draggable={false}
         />
       </div>
-
-      {/* Divider */}
       <div className="divider" style={{ left: `${position}%` }}>
         <div className="divider-handle">
           <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
@@ -94,8 +92,6 @@ function BeforeAfterSlider({ before, after }: { before: string; after: string })
           </svg>
         </div>
       </div>
-
-      {/* Labels */}
       <div className="absolute top-3 left-3 z-20 pointer-events-none">
         <span className="bg-navy text-white text-xs font-bold px-2.5 py-1 rounded-md">Before</span>
       </div>
@@ -107,47 +103,62 @@ function BeforeAfterSlider({ before, after }: { before: string; after: string })
 }
 
 export default function BeforeAfter() {
+  const [cases, setCases] = useState<BeforeAfterCase[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    getBeforeAfterCases()
+      .then(res => setCases(res.contents.length > 0 ? res.contents : fallbackCases))
+      .catch(() => setCases(fallbackCases))
+      .finally(() => setLoading(false))
+  }, [])
+
   return (
     <section id="before-after" className="bg-sky-light py-20 md:py-28">
       <div className="max-w-5xl mx-auto px-4">
 
-        {/* Section heading */}
         <div className="text-center mb-12">
           <span className="inline-block text-xs font-bold tracking-widest text-navy/50 uppercase mb-3">Before / After</span>
-          <h2 className="text-2xl md:text-3xl font-black text-navy">
-            ビフォーアフター
-          </h2>
+          <h2 className="text-2xl md:text-3xl font-black text-navy">ビフォーアフター</h2>
           <div className="mt-3 mx-auto w-12 h-1 rounded-full bg-navy"></div>
           <p className="mt-5 text-navy/70 leading-relaxed">
             汚れの状態や仕上がりを写真でご確認いただけます。<br className="hidden md:block" />
             気になる箇所があれば、同じように写真を送ってご相談ください。
           </p>
-          <p className="mt-2 text-sm text-navy/50">
-            ← スライダーを動かして比較できます →
-          </p>
+          <p className="mt-2 text-sm text-navy/50">← スライダーを動かして比較できます →</p>
         </div>
 
-        {/* Cases — mobile: free horizontal scroll / desktop: grid */}
-        <div
-          className="flex gap-5 overflow-x-auto pb-4 md:grid md:grid-cols-2 md:overflow-visible md:pb-0 -mx-4 px-4 md:mx-0 md:px-0"
-          style={{ scrollbarWidth: 'none', WebkitOverflowScrolling: 'touch' } as React.CSSProperties}
-        >
-          {cases.map(c => (
-            <div
-              key={c.id}
-              className="shrink-0 w-72 md:w-auto bg-white rounded-2xl overflow-hidden shadow-sm"
-            >
-              <BeforeAfterSlider before={c.before} after={c.after} />
-              <div className="p-5">
-                <div className="flex items-center gap-2 mb-1">
-                  <span className="w-1 h-5 rounded-full bg-navy inline-block"></span>
-                  <h3 className="font-black text-navy text-base">{c.title}</h3>
+        {loading ? (
+          <div className="flex gap-5 -mx-4 px-4">
+            {[1, 2].map(i => (
+              <div key={i} className="shrink-0 w-72 md:flex-1 bg-white rounded-2xl overflow-hidden animate-pulse">
+                <div className="aspect-[4/3] bg-gray-200" />
+                <div className="p-5 space-y-2">
+                  <div className="h-4 bg-gray-200 rounded w-2/3" />
+                  <div className="h-3 bg-gray-200 rounded w-full" />
                 </div>
-                <p className="text-sm text-navy/70">{c.description}</p>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        ) : (
+          <div
+            className="flex gap-5 overflow-x-auto pb-4 md:grid md:grid-cols-2 md:overflow-visible md:pb-0 -mx-4 px-4 md:mx-0 md:px-0"
+            style={{ scrollbarWidth: 'none', WebkitOverflowScrolling: 'touch' } as React.CSSProperties}
+          >
+            {cases.map(c => (
+              <div key={c.id} className="shrink-0 w-72 md:w-auto bg-white rounded-2xl overflow-hidden shadow-sm">
+                <BeforeAfterSlider before={c.before_image.url} after={c.after_image.url} />
+                <div className="p-5">
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="w-1 h-5 rounded-full bg-navy inline-block"></span>
+                    <h3 className="font-black text-navy text-base">{c.title}</h3>
+                  </div>
+                  <p className="text-sm text-navy/70">{c.description}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
         <p className="mt-2 text-center text-xs text-navy/40 md:hidden">← スワイプで見る →</p>
 
       </div>
