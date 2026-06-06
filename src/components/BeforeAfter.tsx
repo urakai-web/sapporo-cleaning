@@ -1,32 +1,6 @@
 import { useState, useRef, useCallback, useEffect } from 'react'
 import { getBeforeAfterCases, type BeforeAfterCase } from '../lib/microcms'
 
-// フォールバック用静的データ
-const fallbackCases: BeforeAfterCase[] = [
-  {
-    id: '1',
-    createdAt: '',
-    updatedAt: '',
-    publishedAt: '',
-    revisedAt: '',
-    before_image: { url: '/images/トイレ掃除前.jpg', height: 600, width: 400 },
-    after_image: { url: '/images/トイレ掃除後.jpg', height: 600, width: 400 },
-    title: 'トイレクリーニング',
-    description: '便器の黄ばみ・水垢・タンク内部まで丁寧に洗浄',
-  },
-  {
-    id: '2',
-    createdAt: '',
-    updatedAt: '',
-    publishedAt: '',
-    revisedAt: '',
-    before_image: { url: '/images/洗面台掃除前.jpg', height: 600, width: 400 },
-    after_image: { url: '/images/洗面台掃除後.jpg', height: 600, width: 400 },
-    title: '洗面台クリーニング',
-    description: '蛇口周りのカルキ汚れ・排水口の詰まりを除去',
-  },
-]
-
 function BeforeAfterSlider({ before, after }: { before: string; after: string }) {
   const [position, setPosition] = useState(50)
   const containerRef = useRef<HTMLDivElement>(null)
@@ -108,8 +82,8 @@ export default function BeforeAfter() {
 
   useEffect(() => {
     getBeforeAfterCases()
-      .then(res => setCases(res.contents.length > 0 ? res.contents : fallbackCases))
-      .catch(() => setCases(fallbackCases))
+      .then(res => setCases(res.contents))
+      .catch(() => setCases([]))
       .finally(() => setLoading(false))
   }, [])
 

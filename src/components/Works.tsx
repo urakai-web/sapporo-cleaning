@@ -1,48 +1,14 @@
 import { useState, useEffect } from 'react'
 import { getWorks, type Work } from '../lib/microcms'
 
-// フォールバック用静的データ（microCMSが空の場合に使用）
-const fallbackWorks: Work[] = [
-  {
-    id: '1',
-    createdAt: '',
-    updatedAt: '',
-    publishedAt: '',
-    revisedAt: '',
-    image: { url: '/images/エアコン.png', height: 400, width: 600 },
-    title: 'エアコンクリーニング',
-    description: '内部のホコリやカビ汚れを洗浄し、ニオイや効きの改善を目指しました。シーズン前のメンテナンスにもおすすめです。',
-  },
-  {
-    id: '2',
-    createdAt: '',
-    updatedAt: '',
-    publishedAt: '',
-    revisedAt: '',
-    image: { url: '/images/洗面台掃除後.jpg', height: 400, width: 600 },
-    title: '洗面台・水回りクリーニング',
-    description: '蛇口周りのカルキ汚れや排水口の詰まりをしっかり除去。ピカピカの仕上がりでご満足いただけました。',
-  },
-  {
-    id: '3',
-    createdAt: '',
-    updatedAt: '',
-    publishedAt: '',
-    revisedAt: '',
-    image: { url: '/images/トイレ掃除後.jpg', height: 400, width: 600 },
-    title: 'トイレクリーニング',
-    description: '便器の黄ばみや水垢、タンク内部まで丁寧に洗浄。気になるニオイもスッキリきれいにします。',
-  },
-]
-
 export default function Works() {
   const [works, setWorks] = useState<Work[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     getWorks()
-      .then(res => setWorks(res.contents.length > 0 ? res.contents : fallbackWorks))
-      .catch(() => setWorks(fallbackWorks))
+      .then(res => setWorks(res.contents))
+      .catch(() => setWorks([]))
       .finally(() => setLoading(false))
   }, [])
 

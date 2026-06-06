@@ -10,24 +10,10 @@ const heroImages = [
   '/images/ヒーローセクション3.png',
 ]
 
-// フォールバック用スタッフ
-const fallbackStaff: Staff[] = [
-  {
-    id: '1',
-    createdAt: '',
-    updatedAt: '',
-    publishedAt: '',
-    revisedAt: '',
-    image: { url: '/images/担当者.jpg', height: 600, width: 400 },
-    name: 'お名前',
-    subtitle: '私が伺います！',
-  },
-]
-
 export default function Hero() {
   const [bgCurrent, setBgCurrent] = useState(0)
   const [bgFading, setBgFading] = useState(false)
-  const [staff, setStaff] = useState<Staff[]>(fallbackStaff)
+  const [staff, setStaff] = useState<Staff[]>([])
   const [staffCurrent, setStaffCurrent] = useState(0)
   const [staffFading, setStaffFading] = useState(false)
 
@@ -46,8 +32,8 @@ export default function Hero() {
   // スタッフデータ取得
   useEffect(() => {
     getStaff()
-      .then(res => { if (res.contents.length > 0) setStaff(res.contents) })
-      .catch(() => {/* フォールバックを維持 */})
+      .then(res => setStaff(res.contents))
+      .catch(() => setStaff([]))
   }, [])
 
   // スタッフローテーション（スタッフが2人以上のとき）
@@ -63,7 +49,7 @@ export default function Hero() {
     return () => clearInterval(timer)
   }, [staff])
 
-  const currentStaff = staff[staffCurrent]
+  const currentStaff = staff[staffCurrent] ?? null
 
   return (
     <section
@@ -137,38 +123,40 @@ export default function Hero() {
             </div>
           </div>
 
-          {/* Right / Bottom: Staff photo (rotating) */}
-          <div className="flex-shrink-0 flex flex-col items-center gap-3 md:gap-4 animate-fadein-delay">
-            <div className="relative">
-              <div className="absolute -inset-2 rounded-2xl bg-white/40 backdrop-blur-sm border border-white/60" />
-              <img
-                src={currentStaff.image.url}
-                alt={currentStaff.name}
-                className={`relative w-48 sm:w-56 md:w-64 lg:w-72 aspect-[3/4] object-cover object-top rounded-xl shadow-2xl transition-opacity duration-400 ${staffFading ? 'opacity-0' : 'opacity-100'}`}
-              />
-            </div>
-
-            {/* Name card */}
-            <div className={`bg-white/80 backdrop-blur-sm border border-sky-lighter rounded-xl px-6 py-3 text-center shadow-sm transition-opacity duration-400 ${staffFading ? 'opacity-0' : 'opacity-100'}`}>
-              <p className="text-xs text-navy/50 font-medium mb-0.5">スタッフ</p>
-              <p className="text-navy font-black text-lg tracking-wide">{currentStaff.name}</p>
-              <p className="text-xs text-navy/70 mt-1">{currentStaff.subtitle}</p>
-            </div>
-
-            {/* スタッフが複数のときドットナビ表示 */}
-            {staff.length > 1 && (
-              <div className="flex gap-1.5">
-                {staff.map((_, i) => (
-                  <button
-                    key={i}
-                    onClick={() => setStaffCurrent(i)}
-                    className={`h-1.5 rounded-full transition-all duration-300 ${i === staffCurrent ? 'w-6 bg-navy' : 'w-1.5 bg-navy/30'}`}
-                    aria-label={`スタッフ ${i + 1}`}
-                  />
-                ))}
+          {/* Right / Bottom: Staff photo (rotating) — microCMSにデータがある場合のみ表示 */}
+          {currentStaff && (
+            <div className="flex-shrink-0 flex flex-col items-center gap-3 md:gap-4 animate-fadein-delay">
+              <div className="relative">
+                <div className="absolute -inset-2 rounded-2xl bg-white/40 backdrop-blur-sm border border-white/60" />
+                <img
+                  src={currentStaff.image.url}
+                  alt={currentStaff.name}
+                  className={`relative w-48 sm:w-56 md:w-64 lg:w-72 aspect-[3/4] object-cover object-top rounded-xl shadow-2xl transition-opacity duration-400 ${staffFading ? 'opacity-0' : 'opacity-100'}`}
+                />
               </div>
-            )}
-          </div>
+
+              {/* Name card */}
+              <div className={`bg-white/80 backdrop-blur-sm border border-sky-lighter rounded-xl px-6 py-3 text-center shadow-sm transition-opacity duration-400 ${staffFading ? 'opacity-0' : 'opacity-100'}`}>
+                <p className="text-xs text-navy/50 font-medium mb-0.5">スタッフ</p>
+                <p className="text-navy font-black text-lg tracking-wide">{currentStaff.name}</p>
+                <p className="text-xs text-navy/70 mt-1">{currentStaff.subtitle}</p>
+              </div>
+
+              {/* スタッフが複数のときドットナビ表示 */}
+              {staff.length > 1 && (
+                <div className="flex gap-1.5">
+                  {staff.map((_, i) => (
+                    <button
+                      key={i}
+                      onClick={() => setStaffCurrent(i)}
+                      className={`h-1.5 rounded-full transition-all duration-300 ${i === staffCurrent ? 'w-6 bg-navy' : 'w-1.5 bg-navy/30'}`}
+                      aria-label={`スタッフ ${i + 1}`}
+                    />
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
 
         </div>
       </div>
