@@ -87,10 +87,10 @@ export default function Hero() {
 
       {/* Gradient overlay */}
       <div className="absolute inset-0 md:hidden" style={{
-        background: 'linear-gradient(to bottom, rgba(255,255,255,0.60) 0%, rgba(255,255,255,0.38) 50%, rgba(255,255,255,0.05) 100%)',
+        background: 'linear-gradient(to bottom, rgba(255,255,255,0.45) 0%, rgba(255,255,255,0.22) 50%, rgba(255,255,255,0.0) 100%)',
       }} />
       <div className="absolute inset-0 hidden md:block" style={{
-        background: 'linear-gradient(to right, rgba(255,255,255,0.78) 0%, rgba(255,255,255,0.58) 35%, rgba(255,255,255,0.15) 58%, rgba(255,255,255,0.0) 100%)',
+        background: 'linear-gradient(to right, rgba(255,255,255,0.65) 0%, rgba(255,255,255,0.42) 35%, rgba(255,255,255,0.08) 58%, rgba(255,255,255,0.0) 100%)',
       }} />
 
       {/* Content */}
