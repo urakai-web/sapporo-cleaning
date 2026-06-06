@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { getStaff, type Staff } from '../lib/microcms'
 
 const LINE_URL = 'https://page.line.me/245ksvcv?openQrModal=true'
@@ -15,7 +15,8 @@ export default function Hero() {
   const [bgFading, setBgFading] = useState(false)
   const [staff, setStaff] = useState<Staff[]>([])
   const [staffCurrent, setStaffCurrent] = useState(0)
-  const [staffFading, setStaffFading] = useState(false)
+  const staffContainerRef = useRef<HTMLDivElement>(null)
+  const [containerWidth, setContainerWidth] = useState(0)
 
   // 背景画像ローテーション
   useEffect(() => {
@@ -36,20 +37,36 @@ export default function Hero() {
       .catch(() => setStaff([]))
   }, [])
 
-  // スタッフローテーション（スタッフが2人以上のとき）
+  // スタッフローテーション（2人以上のとき）
   useEffect(() => {
     if (staff.length <= 1) return
     const timer = setInterval(() => {
-      setStaffFading(true)
-      setTimeout(() => {
-        setStaffCurrent(prev => (prev + 1) % staff.length)
-        setStaffFading(false)
-      }, 400)
+      setStaffCurrent(prev => (prev + 1) % staff.length)
     }, 4000)
     return () => clearInterval(timer)
   }, [staff])
 
+  // カルーセルコンテナ幅を測定
+  useEffect(() => {
+    const el = staffContainerRef.current
+    if (!el) return
+    const ro = new ResizeObserver(() => setContainerWidth(el.clientWidth))
+    ro.observe(el)
+    setContainerWidth(el.clientWidth)
+    return () => ro.disconnect()
+  }, [staff])
+
   const currentStaff = staff[staffCurrent] ?? null
+
+  // ピークカルーセル計算（1人のときは全幅、複数のときは78%幅でピーク表示）
+  const cardGap = 16
+  const cardWidth = staff.length <= 1
+    ? containerWidth
+    : containerWidth > 0 ? containerWidth * 0.78 : 0
+  const peekOffset = staff.length <= 1 ? 0 : (containerWidth - cardWidth) / 2
+  const trackTranslateX = containerWidth > 0
+    ? peekOffset - staffCurrent * (cardWidth + cardGap)
+    : 0
 
   return (
     <section
@@ -123,26 +140,49 @@ export default function Hero() {
             </div>
           </div>
 
-          {/* Right / Bottom: Staff photo (rotating) — microCMSにデータがある場合のみ表示 */}
-          {currentStaff && (
-            <div className="flex-shrink-0 flex flex-col items-center gap-3 md:gap-4 animate-fadein-delay">
-              <div className="relative">
-                <div className="absolute -inset-2 rounded-2xl bg-white/40 backdrop-blur-sm border border-white/60" />
-                <img
-                  src={currentStaff.image.url}
-                  alt={currentStaff.name}
-                  className={`relative w-48 sm:w-56 md:w-64 lg:w-72 aspect-[3/4] object-cover object-top rounded-xl shadow-2xl transition-opacity duration-400 ${staffFading ? 'opacity-0' : 'opacity-100'}`}
-                />
+          {/* Right / Bottom: Staff carousel */}
+          {staff.length > 0 && (
+            <div className="flex-shrink-0 flex flex-col items-center gap-3 md:gap-4 animate-fadein-delay w-full md:w-72 lg:w-80">
+
+              {/* ピークカルーセル */}
+              <div ref={staffContainerRef} className="w-full overflow-hidden">
+                <div
+                  className="flex transition-transform duration-500 ease-in-out"
+                  style={{
+                    gap: `${cardGap}px`,
+                    transform: `translateX(${trackTranslateX}px)`,
+                  }}
+                >
+                  {staff.map((s, i) => (
+                    <div
+                      key={s.id}
+                      className="shrink-0 transition-opacity duration-500 cursor-pointer"
+                      style={{
+                        width: `${cardWidth}px`,
+                        opacity: i === staffCurrent ? 1 : 0.35,
+                      }}
+                      onClick={() => setStaffCurrent(i)}
+                    >
+                      <img
+                        src={s.image.url}
+                        alt={s.name}
+                        className="w-full aspect-[3/4] object-cover object-top rounded-xl shadow-2xl"
+                      />
+                    </div>
+                  ))}
+                </div>
               </div>
 
-              {/* Name card */}
-              <div className={`bg-white/80 backdrop-blur-sm border border-sky-lighter rounded-xl px-6 py-3 text-center shadow-sm transition-opacity duration-400 ${staffFading ? 'opacity-0' : 'opacity-100'}`}>
-                <p className="text-xs text-navy/50 font-medium mb-0.5">スタッフ</p>
-                <p className="text-navy font-black text-lg tracking-wide">{currentStaff.name}</p>
-                <p className="text-xs text-navy/70 mt-1">{currentStaff.subtitle}</p>
-              </div>
+              {/* ネームカード */}
+              {currentStaff && (
+                <div className="bg-white/80 backdrop-blur-sm border border-sky-lighter rounded-xl px-6 py-3 text-center shadow-sm transition-all duration-300">
+                  <p className="text-xs text-navy/50 font-medium mb-0.5">スタッフ</p>
+                  <p className="text-navy font-black text-lg tracking-wide">{currentStaff.name}</p>
+                  <p className="text-xs text-navy/70 mt-1">{currentStaff.subtitle}</p>
+                </div>
+              )}
 
-              {/* スタッフが複数のときドットナビ表示 */}
+              {/* ドットナビ（2人以上のとき） */}
               {staff.length > 1 && (
                 <div className="flex gap-1.5">
                   {staff.map((_, i) => (
