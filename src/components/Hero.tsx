@@ -196,36 +196,12 @@ export default function Hero() {
                 </div>
               )}
 
-              {/* ドットナビ（2人以上のとき） */}
-              {staff.length > 1 && (
-                <div className="flex gap-1.5">
-                  {staff.map((_, i) => (
-                    <button
-                      key={i}
-                      onClick={() => setStaffCurrent(i)}
-                      className={`h-1.5 rounded-full transition-all duration-300 ${i === staffCurrent ? 'w-6 bg-navy' : 'w-1.5 bg-navy/30'}`}
-                      aria-label={`スタッフ ${i + 1}`}
-                    />
-                  ))}
-                </div>
-              )}
             </div>
           )}
 
         </div>
       </div>
 
-      {/* 背景画像ドット */}
-      <div className="absolute bottom-6 left-0 right-0 flex justify-center gap-2 z-10">
-        {heroImages.map((_, i) => (
-          <button
-            key={i}
-            onClick={() => setBgCurrent(i)}
-            className={`h-1.5 rounded-full transition-all duration-300 ${i === bgCurrent ? 'w-8 bg-navy' : 'w-2 bg-navy/30'}`}
-            aria-label={`画像 ${i + 1}`}
-          />
-        ))}
-      </div>
     </section>
   )
 }
